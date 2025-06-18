@@ -30,46 +30,37 @@ MainTab:CreateButton({
 	end
 })
 
--- 🛒 Buy Button
-MainTab:CreateButton({
-	Name = "🛒 Buy Selected Item",
-	Callback = function()
-		if args[1] and args[1] ~= "" then
-			local success, err = pcall(function()
-				game:GetService("ReplicatedStorage")
-					:WaitForChild("Packages")
-					:WaitForChild("Net")
-					:WaitForChild("RF/CoinsShopService/RequestBuy")
-					:InvokeServer(unpack(args))
-			end)
-
-			if success then
-				print("✅ Bought:", args[1])
-			else
-				warn("❌ Buy error:", err)
-			end
-		else
-			warn("⚠️ No item selected.")
-		end
-	end
-})
-
 -- 📌 Current selection label
 local selectedLabel = MainTab:CreateLabel("Selected Item: " .. args[1])
 
--- 🔄 Item selection handler
-local function setItem(name)
+-- 🔄 Select and auto-buy item
+local function setItemAndBuy(name)
 	args[1] = name
 	selectedLabel:Set("Selected Item: " .. name)
 	print("🔄 Selected item set to:", name)
+
+	local success, err = pcall(function()
+		game:GetService("ReplicatedStorage")
+			:WaitForChild("Packages")
+			:WaitForChild("Net")
+			:WaitForChild("RF/CoinsShopService/RequestBuy")
+			:InvokeServer(unpack(args))
+	end)
+
+	if success then
+		print("✅ Bought:", name)
+	else
+		warn("❌ Buy error:", err)
+	end
 end
 
--- ✅ Full item list with “Trap” included
+-- ✅ Prioritized and full item list
 local itemList = {
 	"Invisibility Cloak",
+	"Medusa's Head",
+	"Trap",
 	"Boogie Bomb",
 	"Ruby Slap",
-	"Medusa's Head",
 	"Dark Matter Slap",
 	"Flame Slap",
 	"Quantum Cloner",
@@ -77,17 +68,15 @@ local itemList = {
 	"Nuclear Slap",
 	"Rainbowrath Sword",
 	"Galaxy Slap",
-	"Laser Cape",
-	"Trap"
+	"Laser Cape"
 }
 
--- 🔘 Buttons for each item
+-- 🔘 Buttons for each item (auto-buy on click)
 for _, item in ipairs(itemList) do
 	MainTab:CreateButton({
 		Name = item,
 		Callback = function()
-			setItem(item)
+			setItemAndBuy(item)
 		end
 	})
 end
-
