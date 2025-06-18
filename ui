@@ -74,3 +74,18 @@ for _, item in ipairs(itemList) do
 		end
 	})
 end
+
+MainTab:CreateButton({
+	Name = "🧠 Load ArbixHubV4 Script",
+	Callback = function()
+		local success, err = pcall(function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubV4.lua"))()
+		end)
+
+		if success then
+			print("✅ ArbixHubV4 Loaded")
+		else
+			warn("❌ Failed to load ArbixHubV4:", err)
+		end
+	end
+})
